@@ -14,24 +14,28 @@ class Animator:
         # self.stacks = []
         # self.stacks_offset = 0
         self.current_day = 0
-        self.animation_time = 0
+        self.time = 0
+        self.animation_end_time = 0
         self.animation_duration = 3
         self.repetition_days = repetition_iterator()
-        self.currently_animating = []
+        self.current_day_animations = []
         self.cardcount = 0
+        self.max_animation_duration = 0.5
 
         self.next_day()
 
 
+
     def update(self, elapsed_time):
-        self.animation_time += elapsed_time
-        if self.animation_time >= self.animation_duration:
+        self.time += elapsed_time
+        if self.time >= self.animation_end_time:
             self.next_day()
 
     def next_day(self):
 
-        for cube in self.currently_animating:
-            cube.trajectory = None # Reset previous animations
+        # for cube in self.currently_animating:
+        #     cube.trajectory = None # Reset previous animations
+        self.current_day_animations = [] # Clear list of the current day of animations
 
         try:
             day, repetitions = self.repetition_days.next()
@@ -65,10 +69,11 @@ class Animator:
         #     if self.cubes[card] in self.stacks[day]:
         #         self.stacks[day].remove(self.cubes[card]) # Remove cube from old stack
 
-        self.animation_duration = min(1.5, max([cube.trajectory and cube.trajectory.duration for cube in self.currently_animating]))
-
-        # Reset animation timer
-        self.animation_time = 0
+        self.animation_duration = len(self.current_day_animations) and min(self.max_animation_duration, max([cube.trajectory and cube.trajectory.duration for cube in self.current_day_animations])) or self.max_animation_duration
+        if self.animation_duration == None:
+            self.animation_end_time = self.time
+        else:
+            self.animation_end_time = self.time + self.animation_duration
 
         # TODO: Handle cards that were not repeated (and are therefore located at "negative" days)
 
@@ -86,9 +91,9 @@ class Animator:
         if to_day not in self.stacks:
             self.stacks[to_day] = []
         next_position = Vector(to_day, len(self.stacks[to_day]))
-        # cube.trajectory = Trajectory(cube.position, next_position)
+        cube.trajectory = Trajectory(cube.position, next_position, self.time)
         cube.position = next_position
-        self.currently_animating.append(cube)
+        self.current_day_animations.append(cube)
         self.stacks[to_day].append(cube)
 
     def get_date(self):

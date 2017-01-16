@@ -44,6 +44,9 @@ class Example(QtGui.QWidget):
         self.fps_stats = []
         self.fps_stats_samples = 40
 
+        # self.bg_color = QColor(Qt.white)
+        self.bg_color= QtGui.QColor.fromHsl(215, 0.42*255, 0.11*255)
+
     def initUI(self):
         # self.setGeometry(300, 300, 280, 170)
         self.setMinimumWidth(1280)
@@ -56,6 +59,10 @@ class Example(QtGui.QWidget):
         qp.begin(self)
         qp.setRenderHint(QtGui.QPainter.Antialiasing)
         # self.drawPoints(qp)
+        # qp.setPen(self.bg_color)
+        # qp.set(QtCore.Qt.red)
+        # qp.setPen(QPen(QBrush(self.bg_color), 2))
+        qp.fillRect(0, 0, self.width(), self.height(), self.bg_color)
         self.drawCubes(qp)
         self.drawText(qp, self.animator.current_day, self.animator.get_date(), self.animator.get_cardcount())
         qp.end()
@@ -94,8 +101,9 @@ class Example(QtGui.QWidget):
         # qp.setPen(QPen(QBrush(Qt.red), 2.5, Qt.DashLine))
         qp.setPen(QPen(QBrush(cube.color), 2))
 
-        pos = self.camera.transform_position(cube.get_position(self.animator.animation_time))
+        pos = self.camera.transform_position(cube.get_position(self.animator.time))
         rectangle = QtCore.QRectF(pos.x, pos.y, 1.0/self.camera.scale, 1.0/self.camera.scale)
+        # qp.fillRect(rectangle, cube.color)
         qp.drawRect(rectangle)
 
     def keyPressEvent(self, QKeyEvent):
@@ -128,7 +136,7 @@ class Example(QtGui.QWidget):
         last_time = time.time()
         for i in range(1000000):
             current_time = time.time()
-            elapsed_time = (current_time - last_time) * 100#23#4#3#0
+            elapsed_time = (current_time - last_time) * 4#100#23#4#3#0
             self.update_fps_stats(current_time - last_time)
             last_time = current_time
             self.update()

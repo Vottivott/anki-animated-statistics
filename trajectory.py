@@ -8,7 +8,7 @@ Class that represents the trajectory movement between two positions
 class Trajectory:
     gravity = 9.82 * 30 * 0.13
 
-    def __init__(self, start, end, angle=pi/4):
+    def __init__(self, start, end, animation_start_time, angle=pi/5):
         """
         Creates a new Trajectory object
         :param start: the start position as a Vector
@@ -24,6 +24,7 @@ class Trajectory:
         else:
             self.initial_velocity = self.calculate_initial_velocity(angle)
             self.duration = self.get_duration()
+        self.animation_start_time = animation_start_time
 
     def calculate_initial_velocity(self, angle):
         delta = self.end - self.start
@@ -37,10 +38,11 @@ class Trajectory:
         return Vector(speed*cos(angle), speed*sin(angle))
 
     def position_at_time(self, t):
-        if t >= self.duration:
+        animation_time = t - self.animation_start_time
+        if animation_time >= self.duration:
             return self.end
-        dx = t * self.initial_velocity.x
-        dy = t * self.initial_velocity.y - t**2 * Trajectory.gravity / 2
+        dx = animation_time * self.initial_velocity.x
+        dy = animation_time * self.initial_velocity.y - animation_time**2 * Trajectory.gravity / 2
         return self.start + Vector(dx, dy)
 
     def get_duration(self):

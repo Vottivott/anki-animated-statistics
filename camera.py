@@ -5,7 +5,7 @@ class Camera:
 
     def __init__(self):
         self.position = Vector(-2,-2)
-        self.scale = 0.4#0.50
+        self.scale = 0.25#0.4#0.50
         self.size = Vector(1000,600)
 
 
