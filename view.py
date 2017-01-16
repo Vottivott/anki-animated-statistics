@@ -10,22 +10,12 @@ from animator import Animator
 import time
 import datetime
 
-"""
-ZetCode PyQt4 tutorial
-
-In the example, we draw randomly 1000 red points
-on the window.
-
-author: Jan Bodnar
-website: zetcode.com
-last edited: September 2011
-"""
-
 import sys, random
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
+debug_message = ""
 
 class Example(QtGui.QWidget):
     def __init__(self):
@@ -36,8 +26,6 @@ class Example(QtGui.QWidget):
         self.t = 0
 
         self.frames_per_second = 24
-
-        self.camera = Camera()
 
         self.animator = Animator()
 
@@ -72,7 +60,8 @@ class Example(QtGui.QWidget):
         cards_str = "Added cards: " + str(cards)
 
         debug_str = "FPS: %0.f" % (sum(self.fps_stats) / len(self.fps_stats))
-        qp.drawText(self.width() - 200, 10, 190, 200, QtCore.Qt.AlignRight, date_str + "\n" + cards_str + "\n" + debug_str)
+        debug_str += "\n" + debug_message
+        qp.drawText(self.width() - 400, 10, 390, 200, QtCore.Qt.AlignRight, date_str + "\n" + cards_str + "\n" + debug_str)
 
 
 
@@ -101,21 +90,21 @@ class Example(QtGui.QWidget):
         # qp.setPen(QPen(QBrush(Qt.red), 2.5, Qt.DashLine))
         qp.setPen(QPen(QBrush(cube.color), 2))
 
-        pos = self.camera.transform_position(cube.get_position(self.animator.time))
-        rectangle = QtCore.QRectF(pos.x, pos.y, 1.0/self.camera.scale, 1.0/self.camera.scale)
+        pos = self.animator.camera.transform_position(cube.get_position(self.animator.time))
+        rectangle = QtCore.QRectF(pos.x, pos.y, 1.0/self.animator.camera.scale, 1.0/self.animator.camera.scale)
         # qp.fillRect(rectangle, cube.color)
         qp.drawRect(rectangle)
 
     def keyPressEvent(self, QKeyEvent):
         key = QKeyEvent.key()
         if key == QtCore.Qt.Key_Left:
-            self.camera.position.x -= 10
+            self.animator.camera.position.x -= 10
         if key == QtCore.Qt.Key_Right:
-            self.camera.position.x += 10
+            self.animator.camera.position.x += 10
         if key == QtCore.Qt.Key_Up:
-            self.camera.position.x -= 30
+            self.animator.camera.position.x -= 30
         if key == QtCore.Qt.Key_Down:
-            self.camera.position.x += 30
+            self.animator.camera.position.x += 30
 
     def drawPoints(self, qp):
         qp.setPen(QtCore.Qt.red)

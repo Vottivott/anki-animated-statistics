@@ -1,20 +1,26 @@
 # from aqt import mw
 
-
+# import view
 
 import datetime
-start_date = None
+start_date = datetime.datetime(2012, 2, 15, 5, 0, 0)#None
 
-def get_date(timestamp):
+def get_date_from_timestamp(timestamp):
     return datetime.datetime.fromtimestamp(timestamp / 1000)
 
 def get_day(timestamp):
-    date = get_date(timestamp)
+    date = get_date_from_timestamp(timestamp)
     delta = date - start_date
     return delta.days
 
-def get_date(anki_day):
-    return datetime.date(2012,02,18) + datetime.timedelta(days=anki_day)#start_date
+anki_crt = get_date_from_timestamp(1352952000*1000) #get_date(mw.col.crt)
+
+def get_date_from_anki_day(anki_day):
+    return start_date + datetime.timedelta(days=anki_day)#start_date
+    # return datetime.date(2012,02,18) + datetime.timedelta(days=anki_day)#start_date
+
+
+
 
 def repetition_iterator():
     """
@@ -34,6 +40,7 @@ def repetition_iterator():
         hannes_data = pickle.load(file)
     print len(hannes_data)
     for repday in hannes_data:
+        # print repday
         yield repday
     return
     # mock_data = [
@@ -48,14 +55,15 @@ def repetition_iterator():
     # return
     rep = mw.col.db.all("select id, cid, ease, ivl from revlog ORDER BY id, ivl ASC")
     global start_date
-    start_date = get_date(rep[0][0])
-    s = ""
-    for i in range(5):
-        s += str(get_date(rep[i][0])) + "\n"
-    i = 0
-    while get_day(rep[i][0]) == 0:
-        i += 1
-    s+= ("i: %d" % i)
+    start_date = get_date_from_timestamp(rep[0][0])
+    start_date = start_date.replace(minute=anki_crt.minute, hour=anki_crt.hour, second=anki_crt.second)
+    # s = ""
+    # for i in range(5):
+    #     s += str(get_date_from_timestamp(rep[i][0])) + "\n"
+    # i = 0
+    # while get_day(rep[i][0]) == 0:
+    #     i += 1
+    # s+= ("i: %d" % i)
 
 
     seen_cards = {}
@@ -73,6 +81,8 @@ def repetition_iterator():
     repetitions = []
     for (t, cid, ease, ivl) in rep:
         day = get_day(t)
+        # if view.debug_message == "":
+        #     view.debug_message = str(day) + ", " + str(get_date_from_timestamp(t)) + ", " + str(anki_crt)
         if day != last_day:
             yield day, repetitions
             repetitions = []

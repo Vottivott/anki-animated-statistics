@@ -2,7 +2,7 @@ from vector import Vector
 from trajectory import Trajectory
 from cube import Cube
 from camera import Camera
-from ankidata import repetition_iterator, get_date
+from ankidata import repetition_iterator, get_date_from_anki_day
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
@@ -11,6 +11,7 @@ class Animator:
     def __init__(self):
         self.cubes = dict() # Mapping from card id to cube object
         self.stacks = dict() # Mapping from day to stack
+        self.camera = Camera()
         # self.stacks = []
         # self.stacks_offset = 0
         self.current_day = 0
@@ -30,6 +31,7 @@ class Animator:
         self.time += elapsed_time
         if self.time >= self.animation_end_time:
             self.next_day()
+        self.camera.update_position(elapsed_time)
 
     def next_day(self):
 
@@ -43,6 +45,8 @@ class Animator:
         except StopIteration:
             print "Finished!"
             return
+
+        print day
 
         cards_to_remove = []
 
@@ -69,7 +73,7 @@ class Animator:
         #     if self.cubes[card] in self.stacks[day]:
         #         self.stacks[day].remove(self.cubes[card]) # Remove cube from old stack
 
-        self.animation_duration = len(self.current_day_animations) and min(self.max_animation_duration, max([cube.trajectory and cube.trajectory.duration for cube in self.current_day_animations])) or self.max_animation_duration
+        self.animation_duration = self.max_animation_duration#len(self.current_day_animations) and min(self.max_animation_duration, max([cube.trajectory and cube.trajectory.duration for cube in self.current_day_animations])) or self.max_animation_duration
         if self.animation_duration == None:
             self.animation_end_time = self.time
         else:
@@ -97,7 +101,7 @@ class Animator:
         self.stacks[to_day].append(cube)
 
     def get_date(self):
-        return get_date(self.current_day)
+        return get_date_from_anki_day(self.current_day)
 
     def get_cardcount(self):
         return self.cardcount

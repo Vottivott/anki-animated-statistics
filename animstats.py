@@ -16,6 +16,8 @@ import view
 def testFunction():
     view.main()
     # from ankidata import repetition_iterator
+    # import ankidata
+    #
     # all_reps = []
     # r = repetition_iterator()
     # while 1:
@@ -25,7 +27,7 @@ def testFunction():
     #         break
     # with open("/home/vottivott/hannes_anki_repetitions.pickle", "wr") as file:
     #     pickle.dump(all_reps, file)
-    #     showInfo("Done!")
+    #     showInfo("Done!\nstart_date = " + str(ankidata.start_date))
 
 
 
