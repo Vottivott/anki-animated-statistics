@@ -85,12 +85,8 @@ class Example(QtGui.QWidget):
 
 
     def drawCube(self, qp, cube):
-        size = self.size()
-        # qp.setPen(cube.color)
-        # qp.setPen(QPen(QBrush(Qt.red), 2.5, Qt.DashLine))
         qp.setPen(QPen(QBrush(cube.color), 2))
-
-        pos = self.animator.camera.transform_position(cube.get_position(self.animator.time))
+        pos = self.animator.camera.transform_position(cube.get_position(self.animator.time), self.size())
         rectangle = QtCore.QRectF(pos.x, pos.y, 1.0/self.animator.camera.scale, 1.0/self.animator.camera.scale)
         # qp.fillRect(rectangle, cube.color)
         qp.drawRect(rectangle)
@@ -125,7 +121,7 @@ class Example(QtGui.QWidget):
         last_time = time.time()
         for i in range(1000000):
             current_time = time.time()
-            elapsed_time = (current_time - last_time) * 4#100#23#4#3#0
+            elapsed_time = (current_time - last_time) * 1#4#100#23#4#3#0
             self.update_fps_stats(current_time - last_time)
             last_time = current_time
             self.update()

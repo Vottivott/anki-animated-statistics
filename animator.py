@@ -21,7 +21,8 @@ class Animator:
         self.repetition_days = repetition_iterator()
         self.current_day_animations = []
         self.cardcount = 0
-        self.max_animation_duration = 0.5
+        self.max_animation_duration = 0.05#0.1
+        self.camera.time_per_day = self.max_animation_duration
 
         self.next_day()
 
@@ -30,10 +31,11 @@ class Animator:
     def update(self, elapsed_time):
         self.time += elapsed_time
         if self.time >= self.animation_end_time:
-            self.next_day()
-        self.camera.update_position(elapsed_time)
+            self.next_day(self.time - self.animation_end_time)
+        # self.camera.update_position(elapsed_time)
+        self.camera.position.x = self.current_day - 94
 
-    def next_day(self):
+    def next_day(self, overtime = 0):
 
         # for cube in self.currently_animating:
         #     cube.trajectory = None # Reset previous animations
@@ -75,9 +77,11 @@ class Animator:
 
         self.animation_duration = self.max_animation_duration#len(self.current_day_animations) and min(self.max_animation_duration, max([cube.trajectory and cube.trajectory.duration for cube in self.current_day_animations])) or self.max_animation_duration
         if self.animation_duration == None:
-            self.animation_end_time = self.time
+            self.animation_end_time = self.time - overtime
         else:
-            self.animation_end_time = self.time + self.animation_duration
+            self.animation_end_time = self.time + self.animation_duration - overtime
+        if self.time >= self.animation_end_time:
+            self.next_day(self.time - self.animation_end_time)
 
         # TODO: Handle cards that were not repeated (and are therefore located at "negative" days)
 
