@@ -1,5 +1,5 @@
-# from aqt import mw
-
+from aqt import mw
+from aqt.utils import showInfo
 # import view
 
 import datetime
@@ -35,14 +35,20 @@ def repetition_iterator():
     -   interval is the number of days the card was moved into the future after the repetition
     """
 
-    import pickle
-    with open("hannes_anki_repetitions.pickle") as file:
-        hannes_data = pickle.load(file)
-    print len(hannes_data)
-    for repday in hannes_data:
+    # TODO: Add queue (and type?) for each card so that we know if it should disappear after its last repetition
+    # TODO: Possibly add #reviews for each card so that we know when the last review is made
+    """
+
+    """
+
+    #import pickle
+    #with open("hannes_anki_repetitions.pickle") as file:
+    #    hannes_data = pickle.load(file)
+    #print len(hannes_data)
+    #for repday in hannes_data:
         # print repday
-        yield repday
-    return
+    #    yield repday
+    #return
     # mock_data = [
     #     # [(0, 0),(1,1),(2,2),(3,3)],
     #     [(i,0) for i in range(40)],
@@ -57,6 +63,9 @@ def repetition_iterator():
     global start_date
     start_date = get_date_from_timestamp(rep[0][0])
     start_date = start_date.replace(minute=anki_crt.minute, hour=anki_crt.hour, second=anki_crt.second)
+    # for (t, cid, ease, ivl), (t2, cid2, ease2, ivl2) in zip(rep,rep[1:]):
+    #     if get_day(t2) < get_day(t):
+    #         showInfo((get_day(t2)) + " LESS THAN " + str(get_day(t)))
     # s = ""
     # for i in range(5):
     #     s += str(get_date_from_timestamp(rep[i][0])) + "\n"
@@ -84,7 +93,7 @@ def repetition_iterator():
         # if view.debug_message == "":
         #     view.debug_message = str(day) + ", " + str(get_date_from_timestamp(t)) + ", " + str(anki_crt)
         if day != last_day:
-            yield day, repetitions
+            yield last_day, repetitions
             repetitions = []
             for i in range(day-last_day-1):
                 yield (last_day+1+i, []) # yield days with no repetitions

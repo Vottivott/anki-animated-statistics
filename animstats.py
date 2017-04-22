@@ -14,20 +14,21 @@ import view
 # be called when the menu item is activated.
 
 def testFunction():
-    view.main()
-    # from ankidata import repetition_iterator
-    # import ankidata
-    #
-    # all_reps = []
-    # r = repetition_iterator()
-    # while 1:
-    #     try:
-    #         all_reps.append(r.next())
-    #     except StopIteration:
-    #         break
+    # view.main()
+    from ankidata import repetition_iterator
+    import ankidata
+
+    all_reps = []
+    r = repetition_iterator()
+    while 1:
+        try:
+            all_reps.append(r.next())
+        except StopIteration:
+            break
     # with open("/home/vottivott/hannes_anki_repetitions.pickle", "wr") as file:
     #     pickle.dump(all_reps, file)
-    #     showInfo("Done!\nstart_date = " + str(ankidata.start_date))
+    showInfo("Done!\nstart_date = " + str(ankidata.start_date))
+    view.main()
 
 
 

@@ -15,6 +15,8 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
+import pyperclip
+
 debug_message = ""
 
 class Example(QtGui.QWidget):
@@ -35,12 +37,15 @@ class Example(QtGui.QWidget):
         # self.bg_color = QColor(Qt.white)
         self.bg_color= QtGui.QColor.fromHsl(215, 0.42*255, 0.11*255)
 
+        self.current_id = -1
+
     def initUI(self):
         # self.setGeometry(300, 300, 280, 170)
         self.setMinimumWidth(1280)
         self.setMinimumHeight(720)
         self.setWindowTitle('Animated Statistics')
         self.show()
+        self.setMouseTracking(True)
 
     def paintEvent(self, e):
         qp = QtGui.QPainter()
@@ -52,8 +57,17 @@ class Example(QtGui.QWidget):
         # qp.setPen(QPen(QBrush(self.bg_color), 2))
         qp.fillRect(0, 0, self.width(), self.height(), self.bg_color)
         self.drawCubes(qp)
+
         self.drawText(qp, self.animator.current_day, self.animator.get_date(), self.animator.get_cardcount())
         qp.end()
+
+    def mouseMoveEvent(self, event):
+        for cube in self.animator.cubes.values():
+            pos = self.animator.camera.transform_position(cube.get_position(self.animator.time), self.size())
+            rectangle = QtCore.QRectF(pos.x, pos.y, 1.0 / self.animator.camera.scale, 1.0 / self.animator.camera.scale)
+            if rectangle.contains(event.x(), event.y()):
+                self.current_id = cube.card
+                pyperclip.copy("cid:"+str(self.current_id))
 
     def drawText(self, qp, day, date, cards):
         date_str = "Day " + str(day+1) + "\n" + str(date)
@@ -61,7 +75,7 @@ class Example(QtGui.QWidget):
 
         debug_str = "FPS: %0.f" % (sum(self.fps_stats) / len(self.fps_stats))
         debug_str += "\n" + debug_message
-        qp.drawText(self.width() - 400, 10, 390, 200, QtCore.Qt.AlignRight, date_str + "\n" + cards_str + "\n" + debug_str)
+        qp.drawText(self.width() - 400, 10, 390, 200, QtCore.Qt.AlignRight, date_str + "\n" + cards_str + "\n" + debug_str + "\n\nCurrent card: "+ str(self.current_id))
 
 
 
@@ -75,8 +89,10 @@ class Example(QtGui.QWidget):
         qp.setPen(QPen(QBrush(Qt.red), 2.5, Qt.DashLine))
         size = self.size()
 
+
         for cube in self.animator.cubes.values():
             self.drawCube(qp, cube)
+
             #c = Cube(0, cube.trajectory.end)
             #c.color = QtCore.Qt.black
             #self.drawCube(qp, c)

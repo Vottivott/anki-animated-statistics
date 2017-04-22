@@ -4,7 +4,7 @@ from vector import Vector
 class Camera:
 
     def __init__(self):
-        self.position = Vector(-25,-20)
+        self.position = Vector(-100,-20)
         self.scale = 0.65#0.3#0.25#0.4#0.50
         # self.size = Vector(1000,600)
         self.time_per_day = 0.1

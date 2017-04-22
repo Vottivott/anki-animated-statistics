@@ -33,7 +33,7 @@ class Animator:
         if self.time >= self.animation_end_time:
             self.next_day(self.time - self.animation_end_time)
         # self.camera.update_position(elapsed_time)
-        self.camera.position.x = self.current_day - 94
+        self.camera.position.x = self.current_day - 94*7
 
     def next_day(self, overtime = 0):
 
